@@ -2,10 +2,10 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <title>Generar PDFs por fila (con paginado, logo y progreso)</title>
+  <title>Generar PDFs por fila (segmentado, logo y progreso)</title>
   <style>
     /* Estilos básicos para loader y progress */
-    #loader { display: none; position: fixed; left: 50%; top: 40%; transform: translate(-50%, -50%); background: rgba(255,255,255,0.95); padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 9999; }
+    #loader { display: none; position: fixed; left: 50%; top: 40%; transform: translate(-50%, -50%); background: rgba(255,255,255,0.95); padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 9999; width: 420px; }
     .spinner { border: 6px solid #f3f3f3; border-top: 6px solid #3498db; border-radius: 50%; width: 36px; height: 36px; animation: spin 1s linear infinite; display:inline-block; vertical-align: middle; margin-right:12px; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     #progressContainer { width: 100%; background: #eee; border-radius: 6px; overflow: hidden; margin-top: 8px; }
@@ -13,29 +13,37 @@
     #controls { margin: 16px 0; display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
     label { font-size: 14px; }
     input[type="number"] { width:80px; }
+    table { margin-top:12px; width:100%; }
+    th, td { padding:6px 8px; text-align:left; }
   </style>
 </head>
 <body>
-  <h2>Generar PDFs por fila (con paginado, logo y progreso)</h2>
+  <h2>Generar PDFs por fila (segmentado, logo y progreso)</h2>
 
   <div id="controls">
     <label>Excel: <input id="fileInput" type="file" accept=".xlsx,.xls" /></label>
     <label>Logo (opcional): <input id="logoInput" type="file" accept="image/png,image/jpeg" /></label>
-    <label>Batch size: <input id="batchSizeInput" type="number" min="1" value="50" /></label>
+    <label>Batch size (ZIP): <input id="batchSizeInput" type="number" min="1" value="50" /></label>
+    <label>Rows per PDF: <input id="rowsPerPdfInput" type="number" min="1" value="1" /></label>
+    <label>Lines per page: <input id="linesPerPageInput" type="number" min="5" value="30" /></label>
     <label><input id="useFolder" type="checkbox" /> Guardar en carpeta (si el navegador lo permite)</label>
     <button id="btnPDF" disabled>Generar PDFs</button>
   </div>
 
   <div id="loader">
-    <span class="spinner" aria-hidden="true"></span>
-    <span id="loaderText">Preparando...</span>
+    <div style="display:flex; align-items:center;">
+      <span class="spinner" aria-hidden="true"></span>
+      <div>
+        <div id="loaderText">Preparando...</div>
+        <div id="progressDetails" style="font-size:13px; margin-top:6px;">0 / 0</div>
+      </div>
+    </div>
     <div id="progressContainer" style="margin-top:10px;">
       <div id="progressBar"></div>
     </div>
-    <div style="margin-top:6px; font-size:13px;" id="progressDetails">0 / 0</div>
   </div>
 
-  <table border="1" style="border-collapse:collapse; margin-top:12px;">
+  <table border="1" style="border-collapse:collapse;">
     <thead id="tableHead"></thead>
     <tbody id="tableBody"></tbody>
   </table>
